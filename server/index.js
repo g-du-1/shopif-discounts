@@ -9,7 +9,7 @@ import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 
 // TODO
-import { getAllOffers, storeOffers } from "./offer/offer-controller.js";
+import OfferRouter from "./offer/OfferRouter.js";
 
 const USE_ONLINE_TOKENS = true;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
@@ -85,12 +85,11 @@ export async function createServer(
 
   app.use(express.json());
 
-  // TODO have one controller per route
+  // TODO
   // START PG SERVICE
   // Custom routes
 
-  app.get("/api/v1/offers", verifyRequest(app), getAllOffers);
-  app.post("/api/v1/offers", verifyRequest(app), storeOffers);
+  app.use(OfferRouter);
 
   // Custom routes end
 

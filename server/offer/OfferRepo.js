@@ -17,7 +17,7 @@ export const getOffers = async () => {
   return res.rows;
 };
 
-export const createOffers = async (offers) => {
+export const saveOffers = async (offers) => {
   const res = await pool.query("INSERT INTO offers (productId) VALUES ($1)", [
     [offers],
   ]);
