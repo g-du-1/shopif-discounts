@@ -7,5 +7,5 @@ export const getOffers = async () => {
 };
 
 export const storeOffers = async (offers) => {
-  return await OfferRepo.saveOffers();
+  return await OfferRepo.saveOffers(offers);
 };

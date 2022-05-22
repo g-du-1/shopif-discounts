@@ -1,12 +1,15 @@
 // TODO
-// Look into making this not depend on postgres?
+// Look into making this not depend on postgres so db can be swapped?
 
 import pg from "pg";
 const { Pool } = pg;
 
-const pool = new Pool({
+export const pool = new Pool({
   user: process.env.PG_DB_USER,
-  database: process.env.PG_DB,
+  database:
+    process.env.NODE_ENV === "test"
+      ? process.env.PG_DB + "_test"
+      : process.env.PG_DB,
   password: process.env.PG_DB_PASS,
   port: process.env.PG_PORT,
   host: process.env.PG_HOST,
@@ -18,8 +21,8 @@ export const getOffers = async () => {
 };
 
 export const saveOffers = async (offers) => {
-  const res = await pool.query("INSERT INTO offers (productId) VALUES ($1)", [
-    [offers],
-  ]);
-  return res;
+  for (const offer of offers) {
+    await pool.query("INSERT INTO offers (gid) VALUES ($1)", [offer]);
+  }
+  return offers;
 };

@@ -1,5 +1,6 @@
 import request from "supertest";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { pool } from "../offer/OfferRepo.js";
 
 import { serve } from "./serve.js";
 
@@ -11,12 +12,24 @@ vi.mock(`${process.cwd()}/server/middleware/verify-request.js`, () => ({
   }),
 }));
 
+beforeEach(async () => {
+  await pool.query("TRUNCATE TABLE offers");
+});
+
 describe("Offers API", async () => {
-  test("GET /api/v1/offers returns json array", async () => {
-    const response = await request(app)
+  test("Saves offer(s) to database", async () => {
+    const body = ["testid1", "testid2"];
+    const postResponse = await request(app)
+      .post("/api/v1/offers")
+      .set("content-type", "application/json")
+      .send(body);
+    expect(postResponse.status).toEqual(200);
+
+    const getResponse = await request(app)
       .get("/api/v1/offers")
       .set("Accept", "application/json");
-    expect(response.status).toEqual(200);
-    expect(Array.isArray(response.body)).toEqual(true);
+    expect(getResponse.status).toEqual(200);
+    expect(getResponse.body[0].gid).toEqual("testid1");
+    expect(getResponse.body[1].gid).toEqual("testid2");
   });
 });
