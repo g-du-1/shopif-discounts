@@ -19,10 +19,19 @@ export function DiscountsCard() {
   const handleSelection = async (resources) => {
     setProductPickerOpen(false);
     const productIds = resources.selection.map((product) => product.id);
-    setSelectedProducts(productIds);
-    console.log(await getOffers());
-    storeOffers(productIds);
+    await storeOffers(productIds);
+    const storedOffers = await getOffers();
+    setSelectedProducts(storedOffers.map((productObj) => productObj.gid));
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getOffers();
+      setSelectedProducts(data.map((productObj) => productObj.gid));
+    };
+
+    fetchData();
+  }, []);
 
   const app = useAppBridge();
 
