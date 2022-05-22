@@ -1,5 +1,9 @@
 // TODO
 // Look into making this not depend on postgres so db can be swapped?
+// Set up testing db correctly
+// For now copy DB when there is a change
+// DROP DATABASE discounts_app_db_test
+// CREATE DATABASE discounts_app_db_test TEMPLATE discounts_app_db OWNER discounts_app_user;
 
 import pg from "pg";
 const { Pool } = pg;
@@ -22,7 +26,10 @@ export const getOffers = async () => {
 
 export const saveOffers = async (offers) => {
   for (const offer of offers) {
-    await pool.query("INSERT INTO offers (gid) VALUES ($1)", [offer]);
+    await pool.query(
+      "INSERT INTO offers (gid) VALUES ($1) ON CONFLICT (gid) DO NOTHING;",
+      [offer]
+    );
   }
   return offers;
 };
