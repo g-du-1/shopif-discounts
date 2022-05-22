@@ -32,4 +32,21 @@ describe("Offers API", async () => {
     expect(getResponse.body[0].gid).toEqual("testid1");
     expect(getResponse.body[1].gid).toEqual("testid2");
   });
+
+  test("Does not save duplicate productIds", async () => {
+    const body = ["testid3", "testid4", "testid3"];
+    const postResponse = await request(app)
+      .post("/api/v1/offers")
+      .set("content-type", "application/json")
+      .send(body);
+    expect(postResponse.status).toEqual(200);
+
+    const getResponse = await request(app)
+      .get("/api/v1/offers")
+      .set("Accept", "application/json");
+    expect(getResponse.status).toEqual(200);
+    expect(getResponse.body.length).toEqual(2);
+    expect(getResponse.body[0].gid).toEqual("testid3");
+    expect(getResponse.body[1].gid).toEqual("testid4");
+  });
 });
