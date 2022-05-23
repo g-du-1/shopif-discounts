@@ -6,8 +6,10 @@ const router = express.Router();
 const app = express();
 
 // TODO Validate
+// TODO make sure the public get endpoint is secure. validate signature
 
-router.get("/api/v1/offers", verifyRequest(app), async (req, res) => {
+router.get("/api/v1/offers", async (req, res) => {
+  console.log(req.query);
   const offers = await OfferService.getOffers();
   res.send(offers);
 });
