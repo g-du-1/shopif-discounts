@@ -49,4 +49,17 @@ describe("Offers API", async () => {
     expect(getResponse.body[0].gid).toEqual("testid3");
     expect(getResponse.body[1].gid).toEqual("testid4");
   });
+
+  test("Clears all saved productIds", async () => {
+    const body = ["testid5", "testid6"];
+    const postResponse = await request(app).post("/api/v1/offers").send(body);
+    expect(postResponse.status).toEqual(200);
+
+    const delResponse = await request(app).delete("/api/v1/offers");
+    expect(delResponse.status).toEqual(200);
+
+    const getResponse = await request(app).get("/api/v1/offers");
+    expect(getResponse.status).toEqual(200);
+    expect(getResponse.body.length).toEqual(0);
+  });
 });

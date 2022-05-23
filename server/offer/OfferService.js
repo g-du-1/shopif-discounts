@@ -9,3 +9,7 @@ export const getOffers = async () => {
 export const storeOffers = async (offers) => {
   return await OfferRepo.saveOffers(offers);
 };
+
+export const deleteOffers = async () => {
+  return await OfferRepo.deleteOffers();
+};

@@ -33,3 +33,7 @@ export const saveOffers = async (offers) => {
   }
   return offers;
 };
+
+export const deleteOffers = async () => {
+  await pool.query("TRUNCATE TABLE offers");
+};

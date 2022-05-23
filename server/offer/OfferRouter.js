@@ -22,4 +22,13 @@ router.post("/api/v1/offers", verifyRequest(app), async (req, res) => {
   }
 });
 
+router.delete("/api/v1/offers", verifyRequest(app), async (req, res) => {
+  try {
+    await OfferService.deleteOffers();
+    res.status(200).send("Offers deleted!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 export default router;
