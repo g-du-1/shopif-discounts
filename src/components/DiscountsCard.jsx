@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, TextContainer, Button } from "@shopify/polaris";
+import { Card, TextContainer, Button, ButtonGroup } from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { getSessionToken } from "@shopify/app-bridge-utils";
@@ -22,6 +22,11 @@ export function DiscountsCard() {
     await storeOffers(productIds);
     const storedOffers = await getOffers();
     setSelectedProducts(storedOffers.map((productObj) => productObj.gid));
+  };
+
+  const handleClearClick = async () => {
+    await clearOffers();
+    setSelectedProducts([]);
   };
 
   useEffect(() => {
@@ -62,14 +67,28 @@ export function DiscountsCard() {
     return await response.json();
   };
 
+  const clearOffers = async () => {
+    const token = await getSessionToken(app);
+
+    await fetch(`/api/v1/offers`, {
+      headers: { Authorization: `Bearer ${token}` },
+      method: "DELETE",
+    });
+  };
+
   return (
     <>
       <Card title="3 For £10 Discounts" sectioned>
         <TextContainer spacing="loose">
           <p>Set the 3 for £10 Offers.</p>
-          <Button primary onClick={handleSelectProductsClick}>
-            Select Products
-          </Button>
+          <ButtonGroup>
+            <Button primary onClick={handleSelectProductsClick}>
+              Select Products
+            </Button>
+            <Button destructive onClick={handleClearClick}>
+              Clear offers
+            </Button>
+          </ButtonGroup>
           <ResourcePicker
             resourceType="Product"
             showVariants={false}
