@@ -12,7 +12,7 @@
   };
 
   const fetchOffers = async () => {
-    const response = await fetch("/apps/shopif-discounts/api/v1/offers");
+    const response = await fetch("/apps/shopif-discounts/api/ext/v1/offers");
     if (!response.ok) {
       const message = `An error has occured: ${response.status}`;
       throw new Error(message);

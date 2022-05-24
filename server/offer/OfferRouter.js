@@ -1,15 +1,20 @@
 import express from "express";
 import verifyRequest from "../middleware/verify-request.js";
+import verifySignature from "../middleware/verify-app-proxy-signature.js";
 import * as OfferService from "./OfferService.js";
 
 const router = express.Router();
 const app = express();
 
 // TODO Validate
-// TODO make sure the public get endpoint is secure. validate signature
+// TODO Combine internal and external routes somehow?
 
-router.get("/api/v1/offers", async (req, res) => {
-  console.log(req.query);
+router.get("/api/ext/v1/offers", verifySignature, async (req, res) => {
+  const offers = await OfferService.getOffers();
+  res.send(offers);
+});
+
+router.get("/api/v1/offers", verifyRequest(app), async (req, res) => {
   const offers = await OfferService.getOffers();
   res.send(offers);
 });
