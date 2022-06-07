@@ -1,6 +1,4 @@
 (async () => {
-  console.log("Theme app extension loading...");
-
   const fetchCart = async () => {
     const response = await fetch("/cart.js");
     if (!response.ok) {
@@ -21,9 +19,31 @@
     return data;
   };
 
-  const cart = await fetchCart();
-  console.log(cart);
+  const calculateDiscount = (cartItems, offerIds) => {
+    let totalDiscount = 0;
 
+    cartItems.forEach((item) => {
+      if (offerIds.includes(item.product_id)) {
+        const origFullPrice = item.quantity * item.price;
+        const discountBatches = Math.floor(item.quantity / 3);
+        const totalBatchesPrice = 1000 * discountBatches;
+        const remaining = item.quantity % 3;
+        const remainingFullPrice = remaining * item.price;
+        const discountedPrice = remainingFullPrice + totalBatchesPrice;
+        totalDiscount += origFullPrice - discountedPrice;
+      }
+    });
+
+    return totalDiscount;
+  };
+
+  const cart = await fetchCart();
   const offers = await fetchOffers();
-  console.log(offers);
+
+  const cartItems = cart.items;
+  const offerIds = offers.map((item) =>
+    parseInt(item.gid.replace("gid://shopify/Product/", ""))
+  );
+
+  const cartDiscountToBeApplied = calculateDiscount(cartItems, offerIds);
 })();
