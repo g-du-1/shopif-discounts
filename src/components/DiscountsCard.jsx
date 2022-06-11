@@ -52,6 +52,21 @@ export function DiscountsCard() {
     return data;
   };
 
+  const test = async () => {
+    const token = await getSessionToken(app);
+
+    const response = await fetch(`/api/v1/discounts`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ discount: "558" }),
+    });
+
+    return await response.json();
+  };
+
   const storeOffers = async (offers) => {
     const token = await getSessionToken(app);
 
