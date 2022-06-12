@@ -10,6 +10,7 @@ import verifyRequest from "./middleware/verify-request.js";
 
 // TODO
 import OfferRouter from "./offer/OfferRouter.js";
+import DiscountRouter from "./discount/DiscountRouter.js";
 
 const USE_ONLINE_TOKENS = true;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
@@ -90,6 +91,7 @@ export async function createServer(
   // Custom routes
 
   app.use(OfferRouter);
+  app.use(DiscountRouter);
 
   // Custom routes end
 
