@@ -22,6 +22,7 @@ export const createDiscountCode = async (session, payload) => {
       query: `mutation discountCodeBasicCreate($basicCodeDiscount: DiscountCodeBasicInput!) {
         discountCodeBasicCreate(basicCodeDiscount: $basicCodeDiscount) {
           codeDiscountNode {
+            id
             codeDiscount {
               ... on DiscountCodeBasic {
                 codes(first:10) {
@@ -67,9 +68,35 @@ export const createDiscountCode = async (session, payload) => {
   });
 
   // Is there a better way to do this?
-  const returnedCode =
-    data.body.data.discountCodeBasicCreate.codeDiscountNode.codeDiscount.codes
-      .nodes[0].code;
+  const returnedData = {
+    id: data.body.data.discountCodeBasicCreate.codeDiscountNode.id,
+    code: data.body.data.discountCodeBasicCreate.codeDiscountNode.codeDiscount
+      .codes.nodes[0].code,
+  };
 
-  return returnedCode;
+  return returnedData;
+};
+
+export const deleteDiscountCode = async (session, id) => {
+  const client = new Shopify.Clients.Graphql(session.shop, session.accessToken);
+
+  const data = await client.query({
+    data: {
+      query: `mutation discountCodeDelete($id:ID!) {
+        discountCodeDelete(id: $id) {
+          deletedCodeDiscountId
+          userErrors {
+            field
+            code
+            message
+          }
+        }
+      }`,
+      variables: {
+        id: id,
+      },
+    },
+  });
+
+  return data.body.data.discountCodeDelete.deletedCodeDiscountId;
 };
