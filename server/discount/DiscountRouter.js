@@ -12,11 +12,11 @@ router.post("/api/v1/discounts", verifyRequest(app), async (req, res) => {
   try {
     const session = await Shopify.Utils.loadCurrentSession(req, res);
     const discount = req.body;
-    const discountCode = await DiscountService.createDiscountCode(
+    const discountCodeData = await DiscountService.createDiscountCode(
       session,
       discount
     );
-    res.status(200).send(discountCode);
+    res.status(200).send(discountCodeData);
   } catch (error) {
     res.status(500).send(error.message);
   }
