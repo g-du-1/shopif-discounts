@@ -2,6 +2,8 @@ import request from "supertest";
 import { Shopify } from "@shopify/shopify-api";
 import { describe, expect, test, vi } from "vitest";
 
+import * as DiscountService from "../discount/DiscountService.js";
+
 import { serve } from "./serve.js";
 
 const { app } = await serve(process.cwd(), false);
@@ -23,18 +25,27 @@ describe("Discounts API", async () => {
     session.scope = Shopify.Context.SCOPES;
     session.accessToken = process.env.ADMIN_APP_TOKEN;
     session.expires = null;
+
     vi.spyOn(Shopify.Utils, "loadCurrentSession").mockImplementationOnce(
       () => session
     );
+
     const body = { discount: "348" };
     const postResponse = await request(app)
       .post("/api/v1/discounts")
       .send(body);
-    const savedCode = postResponse.text;
+
+    const savedCode = postResponse.body.code;
+    const savedCodeId = postResponse.body.id;
+
+    expect(postResponse.status).toEqual(200);
     expect(typeof savedCode).toBe("string");
     expect(savedCode.length).toEqual(16);
-    expect(postResponse.status).toEqual(200);
 
-    // TODO Delete created discount
+    const deletedCodeId = await DiscountService.deleteDiscountCode(
+      session,
+      savedCodeId
+    );
+    expect(savedCodeId).toEqual(deletedCodeId);
   });
 });
